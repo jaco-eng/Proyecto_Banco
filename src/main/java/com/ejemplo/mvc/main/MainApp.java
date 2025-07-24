@@ -1,19 +1,18 @@
 package com.ejemplo.mvc.main;
 
-
+import com.ejemplo.mvc.view.BancoView;
+import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-	public static void main(String[] args) {
-		@Override
-	    public void start(Stage primaryStage) {
-	        new ProductoView(primaryStage);
-	    }
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		new BancoView();
+	}
 
-	    public static void main(String[] args) {
-	        launch(args);
-	    }
+	public static void main(String[] args) {
+		launch(args);
 	}
 
 }

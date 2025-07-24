@@ -52,7 +52,12 @@ public class BancoController {
 	}
 	
 	public Cuenta buscarCuenta(int numero) {
-	
+	    for (Cuenta cuenta : cuentas) {
+	        if (cuenta.getNumero() == numero) {
+	            return cuenta;
+	        }
+	    }
+	    return null;
 	}
 }
 
