@@ -7,14 +7,14 @@ public class Transaccion {
 	private double monto;
 	private LocalDate fecha;
 	
-	
+	//constructor
 	public Transaccion(TipoTransaccion tipo, double monto, LocalDate fecha) {
 		this.tipo = tipo;
 		this.monto = monto;
 		this.fecha = fecha;
 	}
 
-
+	//getters
 	public TipoTransaccion getTipo() {
 		return tipo;
 	}

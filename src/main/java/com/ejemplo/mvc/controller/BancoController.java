@@ -1,24 +1,22 @@
 package com.ejemplo.mvc.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.ejemplo.mvc.model.*;
 
 public class BancoController {
 	
-	private List<Cuenta> cuentas = new ArrayList<>();
-	private List<Cliente> clientes = new ArrayList<>();
+	private Banco banco;
 	
+	//constructor
 	public BancoController() {
-		
+		banco = new Banco();
 	}
-	
+	//metodo creaCliente
 	public Cliente creaCliente(int id, String nombre, String telefono) {
         Cliente cliente = new Cliente(id, nombre, telefono);
-        clientes.add(cliente);
+        banco.getClientes().add(cliente);
         return cliente;
 	}
-	
+	//metodo creCuentaCorriente
 	public Cuenta creaCuentaCorriente(int numero, double saldo, Cliente cliente) {
 		Cuenta cuenta = new Corriente(numero, saldo, cliente);
 		if (cliente == null) {
@@ -27,10 +25,11 @@ public class BancoController {
 		if(saldo<0) {
 			throw new RuntimeException("Debe ingresar un saldo positivo.");
 		}
-		cuentas.add(cuenta);
+		banco.getCuentas().add(cuenta);
+        cliente.agregarCuenta(cuenta);
 		return cuenta;
 	}
-	
+	//metodo creaCajaAhorro
 	public Cuenta creaCajaAhorro(int numero, double saldo, Cliente cliente, int movAnuales){
 		Cuenta cuenta = new CajaAhorro(numero, saldo, cliente, movAnuales);
 		if (cliente == null) {
@@ -39,10 +38,11 @@ public class BancoController {
 		if(saldo<0) {
 			throw new RuntimeException("Debe ingresar un saldo positivo.");
 		}
-		cuentas.add(cuenta);
+        banco.getCuentas().add(cuenta);
+        cliente.agregarCuenta(cuenta);
 		return cuenta;
 	}
-	
+	//metodo depositar
 	public double depositar(int numCuenta, double monto) {
 		Cuenta cuenta = buscarCuenta(numCuenta);
 		if (monto <= 0) {
@@ -55,7 +55,7 @@ public class BancoController {
 		cuenta.deposito(monto, cuenta.getCliente());
 		return cuenta.getSaldo();
 	}
-	
+	//metodo retirar
 	public double retirar(int numCuenta, double monto) {
 		Cuenta cuenta = buscarCuenta(numCuenta);
 		if (monto <= 0) {
@@ -68,39 +68,31 @@ public class BancoController {
 		cuenta.retiro(monto, cuenta.getCliente());
 		return cuenta.getSaldo();
 	}
-	
+	//metodo busquedaCuenta
 	public Cuenta buscarCuenta(int numero) {
 		if (numero <= 0) {
 	        throw new RuntimeException("Numero de cuenta invalido.");
 	    }
 		
-	    for (Cuenta cuenta : cuentas) {
+	    for (Cuenta cuenta : banco.getCuentas()) {
 	        if (cuenta.getNumero() == numero) {
 	            return cuenta;
 	        }
 	    }
 	    return null;
 	}
-	
+	//metodo busquedaCliente
 	public Cliente buscarCliente(int id) {
 		if (id <= 0) {
 	        throw new RuntimeException("Numero de cuenta invalido.");
 	    }
 		
-        for (Cliente cliente : clientes) {
+        for (Cliente cliente : banco.getClientes()) {
             if (cliente.getId() == id) {
                 return cliente;
             }
         }
         return null;
-    }
-
-	public List<Cuenta> getCuentas() {
-        return cuentas;
-    }
-
-    public List<Cliente> getClientes() {
-        return clientes;
     }
 }
 

@@ -5,17 +5,17 @@ import java.time.LocalDate;
 public class Hora {
     private static Hora instancia;
 
-    public Hora() {
+    private Hora() {
     	
     }
-
+    
     public static Hora getInstance() {
         if (instancia == null) {
             instancia = new Hora();
         }
         return instancia;
     }
-
+    
     public LocalDate today() {
         return LocalDate.now();
     }

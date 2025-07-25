@@ -1,7 +1,6 @@
 package com.ejemplo.mvc.model;
 
 import java.util.ArrayList;
-import java.time.LocalDate;
 import java.util.List;
 
 public abstract class Cuenta {
@@ -19,7 +18,7 @@ public abstract class Cuenta {
 	//metodo deposito
 	public double deposito(double monto, Cliente cliente) {
 		saldo += monto;
-		Transaccion transaccion = new Transaccion(TipoTransaccion.DEPOSITO, monto, LocalDate.now());
+		Transaccion transaccion = new Transaccion(TipoTransaccion.DEPOSITO, monto, Hora.getInstance().today());
 		transacciones.add(transaccion);
 		return saldo;
 	}
@@ -29,16 +28,16 @@ public abstract class Cuenta {
             throw new RuntimeException("No cumple las restricciones de la cuenta.");
         }
 		saldo -= monto;
-		Transaccion transaccion = new Transaccion(TipoTransaccion.RETIRO, monto, LocalDate.now());
+		Transaccion transaccion = new Transaccion(TipoTransaccion.RETIRO, monto, Hora.getInstance().today());
 		transacciones.add(transaccion);
 		return saldo;
 	}
-	
+	//getters
     public List<Transaccion> getTransacciones() {
 		return transacciones;
 	}
-	//getters
-	public int getNumero() {
+
+    public int getNumero() {
 		return numero;
 	}
 	

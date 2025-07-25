@@ -7,14 +7,14 @@ public class Cliente {
 	private int id;
 	private String nombre, telefono;
 	private List<Cuenta> cuentas = new ArrayList<>();	
-	
+	//constructor
 	public Cliente(int id, String nombre, String telefono) {
 		this.id = id;
 		this.nombre = nombre;
 		this.telefono = telefono;
 		
 	}
-	
+	//metodos
 	public void agregarCuenta(Cuenta cuenta) {
 		cuentas.add(cuenta);
 	}
@@ -26,7 +26,7 @@ public class Cliente {
 	public void retiro(Cuenta cuenta, double monto) {
 		cuenta.retiro(monto, this);		
 	}
-
+	//getters
 	public int getId() {
 		return id;
 	}
@@ -39,4 +39,7 @@ public class Cliente {
 		return telefono;
 	}
 	
+	public List<Cuenta> getCuentas() {
+		return cuentas;
+	}	
 }

@@ -97,8 +97,7 @@ public class BancoView {
                     return;
                 }
 
-                Cliente cliente = new Cliente(id, nombre, telefono);
-                banco.creaCliente(id, nombre, telefono);
+                Cliente cliente = banco.creaCliente(id, nombre, telefono);
                 System.out.println("Cliente creado: " + cliente.getNombre() + " - " + cliente.getTelefono());
 
                 ventanaCliente.close();
@@ -186,6 +185,13 @@ public class BancoView {
                 }
 
                 System.out.println("Cuenta creada para el cliente " + cliente.getNombre());
+
+                System.out.println("Cuentas de " + cliente.getNombre() + ":");
+
+                for (Cuenta c : cliente.getCuentas()) {
+                    System.out.println("Numero de cuenta: " + c.getNumero() + ", Saldo: " +
+                    		c.getSaldo() + ", Tipo: " + c.getClass().getSimpleName());
+                }
 
                 ventanaCuenta.close();
             } catch (NumberFormatException ex) {
