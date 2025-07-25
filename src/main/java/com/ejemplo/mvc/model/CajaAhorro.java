@@ -31,13 +31,11 @@ public class CajaAhorro extends Cuenta {
         
         //restriccion maximo de transacciones anuales
         if (numTransacciones >= movAnuales) {
-            System.out.println("Limite anual de transacciones alcanzado.");
-            return false;
+        	return false;
         }
         //restriccion de sobregiro
         if (monto > saldo) {
-            System.out.println("Saldo insuficiente.");
-            return false;
+        	return false;
         }
         
 		return true;

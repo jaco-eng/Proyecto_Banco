@@ -10,64 +10,64 @@ public class BancoController {
 	private List<Cliente> clientes = new ArrayList<>();
 	
 	public BancoController() {
-		Cliente cliente1 = new Cliente(1, "Ana Garcia", "987654321");
-        clientes.add(cliente1);
-        Cuenta cuenta1 = new Corriente(1000, 1000.0, cliente1);
-        cliente1.agregarCuenta(cuenta1); 
-        cuentas.add(cuenta1);
-
-        Cliente cliente2 = new Cliente(2, "Pedro Lopez", "123123123");
-        clientes.add(cliente2);
-        Cuenta cuenta2 = new CajaAhorro(2000, 2000.0, cliente2, 3);
-        cliente2.agregarCuenta(cuenta2);  
-        cuentas.add(cuenta2);
-    }
+		
+	}
 	
 	public Cliente creaCliente(int id, String nombre, String telefono) {
         Cliente cliente = new Cliente(id, nombre, telefono);
         clientes.add(cliente);
         return cliente;
 	}
+	
 	public Cuenta creaCuentaCorriente(int numero, double saldo, Cliente cliente) {
 		Cuenta cuenta = new Corriente(numero, saldo, cliente);
+		if (cliente == null) {
+			throw new RuntimeException("Cliente no encontrado.");
+        }
 		cuentas.add(cuenta);
 		return cuenta;
 	}
 	
 	public Cuenta creaCajaAhorro(int numero, double saldo, Cliente cliente, int movAnuales){
 		Cuenta cuenta = new CajaAhorro(numero, saldo, cliente, movAnuales);
+		if (cliente == null) {
+			throw new RuntimeException("Cliente no encontrado.");
+        }
 		cuentas.add(cuenta);
 		return cuenta;
 	}
 	
-	public boolean depositar(int numCuenta, double monto) {
+	public double depositar(int numCuenta, double monto) {
 		Cuenta cuenta = buscarCuenta(numCuenta);
-		if(monto <= 0) {
-			return false;
-		}
+		if (monto <= 0) {
+            throw new RuntimeException("Monto invalido");
+        }
 		if(cuenta == null) {
-			System.out.println("Cuenta no encontrada.");
-			return false;
+			throw new RuntimeException("Cuenta no encontrada.");
 		}
 		
 		cuenta.deposito(monto, cuenta.getCliente());
-		return true;
+		return cuenta.getSaldo();
 	}
 	
-	public boolean retirar(int numCuenta, double monto, Cliente cliente) {
+	public double retirar(int numCuenta, double monto) {
 		Cuenta cuenta = buscarCuenta(numCuenta);
-		if(monto <= 0) {
-			return false;
-		}
+		if (monto <= 0) {
+            throw new RuntimeException("Monto invalido");
+        }
 		if(cuenta == null) {
-			System.out.println("Cuenta no encontrada.");
-			return false;
+			throw new RuntimeException("Cuenta no encontrada.");
 		}
-		cuenta.retiro(monto, cliente);
-		return true;
+		
+		cuenta.retiro(monto, cuenta.getCliente());
+		return cuenta.getSaldo();
 	}
 	
 	public Cuenta buscarCuenta(int numero) {
+		if (numero <= 0) {
+	        throw new RuntimeException("Numero de cuenta invalido.");
+	    }
+		
 	    for (Cuenta cuenta : cuentas) {
 	        if (cuenta.getNumero() == numero) {
 	            return cuenta;
@@ -77,6 +77,10 @@ public class BancoController {
 	}
 	
 	public Cliente buscarCliente(int id) {
+		if (id <= 0) {
+	        throw new RuntimeException("Numero de cuenta invalido.");
+	    }
+		
         for (Cliente cliente : clientes) {
             if (cliente.getId() == id) {
                 return cliente;

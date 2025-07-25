@@ -11,7 +11,6 @@ public class Corriente extends Cuenta {
 	public boolean checkCuenta(double monto) {
         //restriccion de sobregiro
 		if(monto>saldo) {
-			System.out.println("Saldo insuficiente.");
 			return false;
 		}
 		

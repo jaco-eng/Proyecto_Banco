@@ -8,7 +8,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.ejemplo.mvc.controller.BancoController;
-import com.ejemplo.mvc.model.CajaAhorro;
 import com.ejemplo.mvc.model.Cliente;
 import com.ejemplo.mvc.model.Cuenta;
 
@@ -26,9 +25,11 @@ public class BancoView {
         stage.setTitle("Sistema Bancario");
         
         //Cliente y cuenta ejemplo
-        Cliente clienteEjemplo = banco.creaCliente(1, "Juan Perez", "0999999999");
-        banco.creaCajaAhorro(101, 500.0, clienteEjemplo, 1);
-
+        Cliente cliente1 = banco.creaCliente(1, "Juan Perez", "0999999999");
+        banco.creaCajaAhorro(101, 500.0, cliente1, 5);
+        Cliente cliente2 = banco.creaCliente(2, "Adrian Flores", "0987654321");
+        banco.creaCuentaCorriente(102, 300.0, cliente2);
+        
         //Escena principal
         Button btnIrOperaciones = new Button("Ir a operaciones");
         VBox layoutPrincipal = new VBox(20, new Label("Bienvenido al banco"), btnIrOperaciones);
@@ -40,11 +41,13 @@ public class BancoView {
         Button btnCrearCliente = new Button("Crear Usuario");
         Button btnCrearCuenta = new Button("Crear Cuenta");
         Button btnDepositoRetiro = new Button("Hacer Deposito o  Retiro");
-
+        
+        //Botones
         btnCrearCliente.setOnAction(e -> mostrarCliente());
         btnCrearCuenta.setOnAction(e -> mostrarCuenta());
         btnDepositoRetiro.setOnAction(e -> realizarDepositoRetiro());
-
+        
+        //Layout
         VBox layoutOperaciones = new VBox(10);
         layoutOperaciones.setStyle("-fx-padding: 20px;");
         layoutOperaciones.getChildren().addAll(
@@ -64,7 +67,8 @@ public class BancoView {
     public static void mostrarCliente() {
         Stage ventanaCliente = new Stage();
         ventanaCliente.setTitle("Crear Usuario");
-
+        
+        //Labels
         Label lblId = new Label("ID:");
         TextField txtId = new TextField();
 
@@ -73,9 +77,14 @@ public class BancoView {
 
         Label lblTelefono = new Label("Telefono:");
         TextField txtTelefono = new TextField();
-
+        
+        Label lblResultado = new Label();
+        
+        //Botones
         Button btnGuardar = new Button("Guardar");
-
+        Button btnVolver = new Button("Volver");
+        
+        //Acciones botones
         btnGuardar.setOnAction(e -> {
             try {
                 int id = Integer.parseInt(txtId.getText());
@@ -89,17 +98,32 @@ public class BancoView {
 
                 Cliente cliente = new Cliente(id, nombre, telefono);
                 banco.creaCliente(id, nombre, telefono);
-                System.out.println("Cliente creado: " + cliente.getNombre() + " - " + cliente.getTelefono());
+                lblResultado.setText("Cliente creado: " + cliente.getNombre() + " - " + cliente.getTelefono());
+                lblResultado.setStyle("-fx-text-fill: green;");
 
                 ventanaCliente.close();
             } catch (NumberFormatException ex) {
-                System.out.println("El ID debe ser un número entero.");
+            	lblResultado.setText("El ID debe ser un número entero.");
+                lblResultado.setStyle("-fx-text-fill: red;");
             }
         });
-
+        
+        btnVolver.setOnAction(e -> ventanaCliente.close());
+        
+        //Layout
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(lblId, txtId, lblNombre, txtNombre, lblTelefono, txtTelefono, btnGuardar);
+        layout.getChildren().addAll(
+        	lblId,
+        	txtId,
+        	lblNombre,
+        	txtNombre,
+        	lblTelefono,
+        	txtTelefono,
+        	lblResultado,
+        	btnGuardar,
+        	btnVolver
+        );
 
         Scene scene = new Scene(layout, 300, 300);
         ventanaCliente.setScene(scene);
@@ -107,43 +131,45 @@ public class BancoView {
     }
         
     public static void mostrarCuenta() {
-        Stage ventana = new Stage();
-        ventana.setTitle("Crear Cuenta");
-
+        Stage ventanaCuenta = new Stage();
+        ventanaCuenta.setTitle("Crear Cuenta");
+        
+        //Labels
+        Label lblNumero = new Label("Número de cuenta:");
         TextField txtNumero = new TextField();
-        txtNumero.setPromptText("Numero de cuenta");
 
+        Label lblSaldo = new Label("Saldo inicial:");
         TextField txtSaldo = new TextField();
-        txtSaldo.setPromptText("Saldo inicial");
 
+        Label lblIdCliente = new Label("ID del Cliente:");
         TextField txtIdCliente = new TextField();
-        txtIdCliente.setPromptText("ID Cliente");
 
+        Label lblTipo = new Label("Tipo de cuenta:");
         ComboBox<String> comboTipo = new ComboBox<>();
         comboTipo.getItems().addAll("Corriente", "Caja de Ahorro");
-        comboTipo.setPromptText("Tipo de cuenta");
 
+        Label lblMovAnuales = new Label("Movimientos anuales (solo si es Caja Ahorro):");
         TextField txtMovAnuales = new TextField();
-        txtMovAnuales.setPromptText("Movimientos anuales (solo si es Caja Ahorro)");
         txtMovAnuales.setDisable(true);
 
         comboTipo.setOnAction(e -> {
             txtMovAnuales.setDisable(!"Caja de Ahorro".equals(comboTipo.getValue()));
         });
 
+        Label lblResultado = new Label();
+        
+        //Botones
         Button btnCrear = new Button("Crear Cuenta");
-
+        Button btnVolver = new Button("Volver");
+        
+        //Acciones botones
         btnCrear.setOnAction(e -> {
             try {
                 int numero = Integer.parseInt(txtNumero.getText());
                 double saldo = Double.parseDouble(txtSaldo.getText());
                 int idCliente = Integer.parseInt(txtIdCliente.getText());
 
-                Cliente cliente = banco.buscarCliente(idCliente);
-                if (cliente == null) {
-                    System.out.println("Cliente no encontrado.");
-                    return;
-                }
+                Cliente cliente = banco.buscarCliente(idCliente);   
 
                 String tipo = comboTipo.getValue();
                 Cuenta cuenta = null;
@@ -154,38 +180,49 @@ public class BancoView {
                     int movAnuales = Integer.parseInt(txtMovAnuales.getText());
                     cuenta = banco.creaCajaAhorro(numero, saldo, cliente, movAnuales);
                 } else {
-                    System.out.println("Debe seleccionar el tipo de cuenta.");
+                	lblResultado.setText("Debe seleccionar el tipo de cuenta.");
+                    lblResultado.setStyle("-fx-text-fill: red;");
                     return;
                 }
 
-                System.out.println("Cuenta creada para el cliente " + cliente.getNombre());
-                ventana.close();
+                lblResultado.setText("Cuenta creada para el cliente " + cliente.getNombre());
+                lblResultado.setStyle("-fx-text-fill: green;");
+                ventanaCuenta.close();
             } catch (NumberFormatException ex) {
-                System.out.println("Error: numero invalido en algun campo.");
+            	lblResultado.setText("Error: datos invalidos.");
+                lblResultado.setStyle("-fx-text-fill: red;");
+            } catch (RuntimeException ex) {
+                lblResultado.setText("Error: " + ex.getMessage());
+                lblResultado.setStyle("-fx-text-fill: red;");
             }
         });
-
+        
+        btnVolver.setOnAction(e -> ventanaCuenta.close());
+        
+        //Layout
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(
-            new Label("Numero de cuenta:"), txtNumero,
-            new Label("Saldo inicial:"), txtSaldo,
-            new Label("ID del Cliente:"), txtIdCliente,
-            new Label("Tipo de cuenta:"), comboTipo,
-            txtMovAnuales,
-            btnCrear
+        	lblNumero, txtNumero,
+            lblSaldo, txtSaldo,
+            lblIdCliente, txtIdCliente,
+            lblTipo, comboTipo,
+            lblMovAnuales, txtMovAnuales,
+            lblResultado,
+            btnCrear, 
+            btnVolver
         );
 
         Scene scene = new Scene(layout, 350, 400);
-        ventana.setScene(scene);
-        ventana.show();
+        ventanaCuenta.setScene(scene);
+        ventanaCuenta.show();
     }
     
     public static void realizarDepositoRetiro() {
-    	
-    	Stage ventana = new Stage();
-        ventana.setTitle("Deposito o Retiro");
-
+    	Stage ventanaDepositoRetiro = new Stage();
+        ventanaDepositoRetiro.setTitle("Deposito o Retiro");
+        
+        //Labels
         Label lblCuenta = new Label("Numero de Cuenta:");
         TextField txtCuenta = new TextField();
 
@@ -193,29 +230,28 @@ public class BancoView {
         TextField txtMonto = new TextField();
 
         Label lblResultado = new Label();
-
+        
+        //Botones
         Button btnDeposito = new Button("Depositar");
         Button btnRetiro = new Button("Retirar");
         Button btnVolver = new Button("Volver");
         
-        // Acciones botones
+        //Acciones botones
         btnDeposito.setOnAction(e -> {
             try {
                 int numero = Integer.parseInt(txtCuenta.getText());
                 double monto = Double.parseDouble(txtMonto.getText());
+                double saldoActual = banco.depositar(numero, monto);
 
-                Cuenta cuenta = banco.buscarCuenta(numero);
-                if (cuenta == null) {
-                    lblResultado.setText("Cuenta no encontrada.");
-                    return;
-                }
-
-                Cliente cliente = cuenta.getCliente();
-                cuenta.deposito(monto, cliente);
-                lblResultado.setText("Deposito exitoso. Saldo actual: $" + cuenta.getSaldo());
+        		lblResultado.setText("Deposito exitoso. Saldo actual $" + saldoActual);
+                lblResultado.setStyle("-fx-text-fill: green;");
 
             } catch (NumberFormatException ex) {
-                lblResultado.setText("Datos invalidos.");
+                lblResultado.setText("Error: datos invalidos.");
+                lblResultado.setStyle("-fx-text-fill: red;");
+            } catch (RuntimeException ex) {
+                lblResultado.setText("Error: " + ex.getMessage());
+                lblResultado.setStyle("-fx-text-fill: red;");
             }
         });
 
@@ -223,26 +259,23 @@ public class BancoView {
             try {
                 int numero = Integer.parseInt(txtCuenta.getText());
                 double monto = Double.parseDouble(txtMonto.getText());
-
-                Cuenta cuenta = banco.buscarCuenta(numero);
-                if (cuenta == null) {
-                    lblResultado.setText("Cuenta no encontrada.");
-                    return;
-                }
+                double saldoActual = banco.retirar(numero, monto);
                 
-                Cliente cliente = cuenta.getCliente();
-                cuenta.retiro(monto, cliente);
-                lblResultado.setText("Retiro exitoso. Saldo actual: $" + cuenta.getSaldo());
+        		lblResultado.setText("Retiro exitoso. Saldo actual $" + saldoActual);
+                lblResultado.setStyle("-fx-text-fill: green;");
 
             } catch (NumberFormatException ex) {
-                lblResultado.setText("Datos invalidos.");
+                lblResultado.setText("Error: datos invalidos.");
+                lblResultado.setStyle("-fx-text-fill: red;");
             } catch (RuntimeException ex) {
                 lblResultado.setText("Error: " + ex.getMessage());
+                lblResultado.setStyle("-fx-text-fill: red;");
             }
         });
-        btnVolver.setOnAction(e -> ventana.close());
-
-        // Layout: botones y campo monto arriba
+        
+        btnVolver.setOnAction(e -> ventanaDepositoRetiro.close());
+        
+        //Layout
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(
@@ -252,10 +285,9 @@ public class BancoView {
             lblResultado,
             btnVolver
         );
-
+        
         Scene scene = new Scene(layout, 350, 300);
-        ventana.setScene(scene);
-        ventana.show();
-    }
-    
+        ventanaDepositoRetiro.setScene(scene);
+        ventanaDepositoRetiro.show();
+    }    
 }
