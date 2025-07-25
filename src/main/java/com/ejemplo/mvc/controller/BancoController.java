@@ -24,6 +24,9 @@ public class BancoController {
 		if (cliente == null) {
 			throw new RuntimeException("Cliente no encontrado.");
         }
+		if(saldo<0) {
+			throw new RuntimeException("Debe ingresar un saldo positivo.");
+		}
 		cuentas.add(cuenta);
 		return cuenta;
 	}
@@ -33,6 +36,9 @@ public class BancoController {
 		if (cliente == null) {
 			throw new RuntimeException("Cliente no encontrado.");
         }
+		if(saldo<0) {
+			throw new RuntimeException("Debe ingresar un saldo positivo.");
+		}
 		cuentas.add(cuenta);
 		return cuenta;
 	}

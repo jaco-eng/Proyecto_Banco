@@ -92,18 +92,18 @@ public class BancoView {
                 String telefono = txtTelefono.getText();
 
                 if (nombre.isEmpty() || telefono.isEmpty()) {
-                    System.out.println("Debe llenar todos los campos.");
+                	lblResultado.setText("Debe llenar todos los campos.");
+                    lblResultado.setStyle("-fx-text-fill: red;");
                     return;
                 }
 
                 Cliente cliente = new Cliente(id, nombre, telefono);
                 banco.creaCliente(id, nombre, telefono);
-                lblResultado.setText("Cliente creado: " + cliente.getNombre() + " - " + cliente.getTelefono());
-                lblResultado.setStyle("-fx-text-fill: green;");
+                System.out.println("Cliente creado: " + cliente.getNombre() + " - " + cliente.getTelefono());
 
                 ventanaCliente.close();
             } catch (NumberFormatException ex) {
-            	lblResultado.setText("El ID debe ser un número entero.");
+            	lblResultado.setText("El ID debe ser un numero entero.");
                 lblResultado.setStyle("-fx-text-fill: red;");
             }
         });
@@ -185,8 +185,8 @@ public class BancoView {
                     return;
                 }
 
-                lblResultado.setText("Cuenta creada para el cliente " + cliente.getNombre());
-                lblResultado.setStyle("-fx-text-fill: green;");
+                System.out.println("Cuenta creada para el cliente " + cliente.getNombre());
+
                 ventanaCuenta.close();
             } catch (NumberFormatException ex) {
             	lblResultado.setText("Error: datos invalidos.");
@@ -213,7 +213,7 @@ public class BancoView {
             btnVolver
         );
 
-        Scene scene = new Scene(layout, 350, 400);
+        Scene scene = new Scene(layout, 350, 450);
         ventanaCuenta.setScene(scene);
         ventanaCuenta.show();
     }
